@@ -55,18 +55,6 @@ public class ProductServiceImpl implements ProductService {
         return ProductTransformer.productToAddProductResponseDto(product);
     }
 
-    public void decreaseProductQuantity(Item item) throws ProductOutOfStockException, ProductDoesNotExistException {
-        Product product = item.getProduct();
-        if(product == null) throw new ProductDoesNotExistException("For item " + item.getId() + " product doest not exist");
-        int requiredQuantity = item.getRequiredQuantity();
-        int availableQuantity = product.getQuantity();
-        if(availableQuantity  < requiredQuantity){
-           throw new ProductOutOfStockException("Product out of stock");
-        }
-        product.setQuantity(availableQuantity - requiredQuantity);
-        if(product.getQuantity() == 0) product.setProductStatus(ProductStatus.OUT_OF_STOCK);
-    }
-
     @Override
     public List<ProductResponseDto> getAllProductBySellerEmail(String email) throws SellerDoesNotExistException {
         validation.sellerValidation(email);
@@ -155,5 +143,17 @@ public class ProductServiceImpl implements ProductService {
             productResponseDtoList.add(ProductTransformer.productToProductResponseDto(currProduct));
         }
         return productResponseDtoList;
+    }
+
+    public void decreaseProductQuantity(Item item) throws ProductOutOfStockException, ProductDoesNotExistException {
+        Product product = item.getProduct();
+        if(product == null) throw new ProductDoesNotExistException("For item " + item.getId() + " product doest not exist");
+        int requiredQuantity = item.getRequiredQuantity();
+        int availableQuantity = product.getQuantity();
+        if(availableQuantity  < requiredQuantity){
+            throw new ProductOutOfStockException("Product out of stock");
+        }
+        product.setQuantity(availableQuantity - requiredQuantity);
+        if(product.getQuantity() == 0) product.setProductStatus(ProductStatus.OUT_OF_STOCK);
     }
 }

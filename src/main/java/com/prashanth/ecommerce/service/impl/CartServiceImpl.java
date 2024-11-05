@@ -137,6 +137,14 @@ public class CartServiceImpl implements CartService {
         return itemResponseDtoList;
     }
 
+    @Override
+    public void deleteCart(Cart cart){
+        for(Item currItem : cart.getItems()){
+            currItem.setCart(null);
+        }
+        cartRepository.delete(cart);
+    }
+
     public void resetCart(Cart cart){
         cart.setCartTotal(0);
         cart.setNumberOfItems(0);

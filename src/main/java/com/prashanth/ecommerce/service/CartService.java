@@ -5,6 +5,7 @@ import com.prashanth.ecommerce.dto.responsedto.CardResponseDto;
 import com.prashanth.ecommerce.dto.responsedto.CartResponseDto;
 import com.prashanth.ecommerce.dto.responsedto.ItemResponseDto;
 import com.prashanth.ecommerce.dto.responsedto.OrderResponseDto;
+import com.prashanth.ecommerce.entity.Cart;
 import com.prashanth.ecommerce.entity.Item;
 import com.prashanth.ecommerce.exception.*;
 
@@ -15,4 +16,5 @@ public interface CartService {
     public OrderResponseDto checkOutCart(CheckOutRequestDto checkOutRequestDto) throws CustomerDoestNotExistException, InvalidCardException, CartEmptyException, ProductOutOfStockException, ProductDoesNotExistException;
     public CartResponseDto removeItemFromCart(int customerId, int itemId) throws CustomerDoestNotExistException, ItemNotFoundException;
     public List<ItemResponseDto> getAllItemInCart(int customerId) throws CustomerDoestNotExistException, CartEmptyException;
+    public void deleteCart(Cart cart);
 }

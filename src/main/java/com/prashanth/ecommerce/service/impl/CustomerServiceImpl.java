@@ -3,14 +3,17 @@ package com.prashanth.ecommerce.service.impl;
 import com.prashanth.ecommerce.dto.requestdto.AddCustomerRequestDto;
 import com.prashanth.ecommerce.dto.responsedto.AddCustomerResponseDto;
 import com.prashanth.ecommerce.dto.responsedto.CustomerResponseDto;
+import com.prashanth.ecommerce.entity.Card;
 import com.prashanth.ecommerce.entity.Cart;
 import com.prashanth.ecommerce.entity.Customer;
+import com.prashanth.ecommerce.entity.Ordered;
 import com.prashanth.ecommerce.enums.CardType;
 import com.prashanth.ecommerce.exception.CustomerDoestNotExistException;
 import com.prashanth.ecommerce.exception.CustomerEmailIdAlreadyExistException;
 import com.prashanth.ecommerce.exception.CustomerMobileNumberAlreadyExistException;
 import com.prashanth.ecommerce.exception.CustomerRepositoryEmptyException;
 import com.prashanth.ecommerce.repository.CustomerRepository;
+import com.prashanth.ecommerce.service.CartService;
 import com.prashanth.ecommerce.service.CustomerService;
 import com.prashanth.ecommerce.transformer.CustomerTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,8 @@ import java.util.List;
 public class CustomerServiceImpl implements CustomerService {
     @Autowired
     CustomerRepository customerRepository;
+    @Autowired
+    CartService cartService;
 
     @Override
     public AddCustomerResponseDto addCustomer(AddCustomerRequestDto addCustomerRequestDto) throws CustomerEmailIdAlreadyExistException, CustomerMobileNumberAlreadyExistException {
@@ -110,6 +115,13 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = customerRepository.findByEmail(email);
         if(customer == null) throw new CustomerDoestNotExistException("Customer with this email ID does not exists");
 
+        for(Card currCard : customer.getCards()){
+            currCard.setCustomer(null);
+        }
+        for(Ordered currOrder : customer.getOrderedList()){
+            currOrder.setCustomer(null);
+        }
+        cartService.deleteCart(customer.getCart());
         customerRepository.delete(customer);
 
         return "Customer deleted successfully";
@@ -120,6 +132,13 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = customerRepository.findByMobNo(mobNo);
         if(customer == null) throw new CustomerDoestNotExistException("Customer with this email ID does not exists");
 
+        for(Card currCard : customer.getCards()){
+            currCard.setCustomer(null);
+        }
+        for(Ordered currOrder : customer.getOrderedList()){
+            currOrder.setCustomer(null);
+        }
+        cartService.deleteCart(customer.getCart());
         customerRepository.delete(customer);
 
         return "Customer deleted successfully";
