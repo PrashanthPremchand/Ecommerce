@@ -48,12 +48,7 @@ public class CustomerServiceImpl implements CustomerService {
         List<Customer> customerList = customerRepository.findAll();
         if(customerList == null) throw new CustomerRepositoryEmptyException("Customer repository is empty");
 
-        List<CustomerResponseDto> customerResponseDtoList = new ArrayList<>();
-        for(Customer currCustomer : customerList){
-            customerResponseDtoList.add(CustomerTransformer.customerToCustomerResponseDto(currCustomer));
-        }
-
-        return customerResponseDtoList;
+        return createListOfCustomerResponseDtoFromListOfCustomers(customerList);
     }
 
     @Override
@@ -77,11 +72,7 @@ public class CustomerServiceImpl implements CustomerService {
         List<Customer> customerList = customerRepository.findAllByAge(age);
         if(customerList == null) throw new CustomerDoestNotExistException("No customers above this age");
 
-        List<CustomerResponseDto> customerResponseDtoList = new ArrayList<>();
-        for(Customer currCustomer : customerList){
-            customerResponseDtoList.add(CustomerTransformer.customerToCustomerResponseDto(currCustomer));
-        }
-        return customerResponseDtoList;
+        return createListOfCustomerResponseDtoFromListOfCustomers(customerList);
     }
 
     @Override
@@ -89,11 +80,7 @@ public class CustomerServiceImpl implements CustomerService {
         List<Customer> customerList = customerRepository.findAllByCardType(cardType);
         if(customerList == null) throw new CustomerDoestNotExistException("No customers with this card type");
 
-        List<CustomerResponseDto> customerResponseDtoList = new ArrayList<>();
-        for(Customer currCustomer : customerList){
-            customerResponseDtoList.add(CustomerTransformer.customerToCustomerResponseDto(currCustomer));
-        }
-        return customerResponseDtoList;
+        return createListOfCustomerResponseDtoFromListOfCustomers(customerList);
     }
 
     @Override
@@ -136,5 +123,13 @@ public class CustomerServiceImpl implements CustomerService {
         customerRepository.delete(customer);
 
         return "Customer deleted successfully";
+    }
+
+    public List<CustomerResponseDto> createListOfCustomerResponseDtoFromListOfCustomers(List<Customer> customerList){
+        List<CustomerResponseDto> customerResponseDtoList = new ArrayList<>();
+        for(Customer currCustomer : customerList){
+            customerResponseDtoList.add(CustomerTransformer.customerToCustomerResponseDto(currCustomer));
+        }
+        return customerResponseDtoList;
     }
 }

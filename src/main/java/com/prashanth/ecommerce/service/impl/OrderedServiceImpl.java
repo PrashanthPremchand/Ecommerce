@@ -115,26 +115,14 @@ public class OrderedServiceImpl implements OrderedService {
     public List<OrderResponseDto> getAllOrdersByCustomer(int customerId) throws CustomerDoestNotExistException {
         validation.customerValidation(customerId);
         Customer customer = customerRepository.findById(customerId).get();
-
-        List<OrderResponseDto> orderResponseDtoList = new ArrayList<>();
-        for( Ordered currOrdered : customer.getOrderedList()){
-            orderResponseDtoList.add(OrderTransformer.orderedToOrderResponseDto(currOrdered));
-        }
-
-        return orderResponseDtoList;
+        return createListOfOrderResponseDtoFromListOfOrders(customer.getOrderedList());
     }
 
     @Override
     public List<OrderResponseDto> getFiveOrders(int customerId) throws CustomerDoestNotExistException, OrderDoesNotExist {
         List<Ordered> orderedList = orderedRepository.findByCustomer_CustomerId(customerId);
         if(orderedList == null) throw new OrderDoesNotExist("NO order for this customer ID");
-
-        List<OrderResponseDto> orderResponseDtoList = new ArrayList<>();
-        for( Ordered currOrdered : orderedList){
-            orderResponseDtoList.add(OrderTransformer.orderedToOrderResponseDto(currOrdered));
-        }
-
-        return orderResponseDtoList;
+        return createListOfOrderResponseDtoFromListOfOrders(orderedList);
     }
 
     @Override
@@ -167,5 +155,13 @@ public class OrderedServiceImpl implements OrderedService {
         int length = cardNo.length();
         String strX = "x";
         return strX.repeat(Math.max(0, length - 4)) + cardNo.substring(length - 4);
+    }
+
+    public List<OrderResponseDto> createListOfOrderResponseDtoFromListOfOrders(List<Ordered> orderedList){
+        List<OrderResponseDto> orderResponseDtoList = new ArrayList<>();
+        for( Ordered currOrdered : orderedList){
+            orderResponseDtoList.add(OrderTransformer.orderedToOrderResponseDto(currOrdered));
+        }
+        return orderResponseDtoList;
     }
 }

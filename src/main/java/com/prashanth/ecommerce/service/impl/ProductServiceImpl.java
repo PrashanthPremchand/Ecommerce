@@ -6,6 +6,7 @@ import com.prashanth.ecommerce.dto.responsedto.CartResponseDto;
 import com.prashanth.ecommerce.dto.responsedto.ItemResponseDto;
 import com.prashanth.ecommerce.dto.responsedto.ProductResponseDto;
 import com.prashanth.ecommerce.entity.*;
+import com.prashanth.ecommerce.enums.ProductCategory;
 import com.prashanth.ecommerce.enums.ProductStatus;
 import com.prashanth.ecommerce.exception.*;
 import com.prashanth.ecommerce.repository.*;
@@ -97,5 +98,62 @@ public class ProductServiceImpl implements ProductService {
         productRepository.delete(product);
 
         return "Product has been successfully deleted";
+    }
+
+    @Override
+    public List<ProductResponseDto> getFiveCheapestProducts() throws ProductRepositoryEmptyException {
+        List<Product> productList = productRepository.findFiveCheapest();
+        if(productList == null) throw new ProductRepositoryEmptyException("Product repository is empty");
+        return createListOfProductResponseDtoFromListOfProducts(productList);
+    }
+
+    @Override
+    public List<ProductResponseDto> getFiveCostliestProducts() throws ProductRepositoryEmptyException {
+        List<Product> productList = productRepository.findFiveCostliest();
+        if(productList == null) throw new ProductRepositoryEmptyException("Product repository is empty");
+        return createListOfProductResponseDtoFromListOfProducts(productList);
+    }
+
+    @Override
+    public List<ProductResponseDto> getAllOutOfStockProducts() throws ProductDoesNotExistException {
+        List<Product> productList = productRepository.findAllByProductStatus(ProductStatus.OUT_OF_STOCK);
+        if(productList.isEmpty()) throw new ProductDoesNotExistException("No product is out of stock");
+        return createListOfProductResponseDtoFromListOfProducts(productList);
+    }
+
+    @Override
+    public List<ProductResponseDto> getAllAvailableProducts() throws ProductDoesNotExistException {
+        List<Product> productList = productRepository.findAllByProductStatus(ProductStatus.AVAILABLE);
+        if(productList.isEmpty()) throw new ProductDoesNotExistException("No product is available");
+        return createListOfProductResponseDtoFromListOfProducts(productList);
+    }
+
+    @Override
+    public List<ProductResponseDto> getAllProductQuantityLessThanLimit(int limit) throws ProductDoesNotExistException {
+        List<Product> productList = productRepository.findAllLessThanQuantity(limit);
+        if(productList.isEmpty()) throw new ProductDoesNotExistException("No product is less than the specified limit");
+        return createListOfProductResponseDtoFromListOfProducts(productList);
+    }
+
+    @Override
+    public ProductResponseDto getCheapestInCategory(String productCategory) throws ProductDoesNotExistException {
+        Product product = productRepository.findCheapestProductCategory(productCategory);
+        if(product == null) throw new ProductDoesNotExistException("No product in this product category");
+        return ProductTransformer.productToProductResponseDto(product);
+    }
+
+    @Override
+    public ProductResponseDto getCostliestInCategory(String productCategory) throws ProductDoesNotExistException {
+        Product product = productRepository.findCostliestProductCategory(productCategory);
+        if(product == null) throw new ProductDoesNotExistException("No product in this product category");
+        return ProductTransformer.productToProductResponseDto(product);
+    }
+
+    public List<ProductResponseDto> createListOfProductResponseDtoFromListOfProducts(List<Product> productList){
+        List<ProductResponseDto> productResponseDtoList = new ArrayList<>();
+        for(Product currProduct : productList){
+            productResponseDtoList.add(ProductTransformer.productToProductResponseDto(currProduct));
+        }
+        return productResponseDtoList;
     }
 }
