@@ -1,17 +1,8 @@
 package com.prashanth.ecommerce.validation;
 
-import com.prashanth.ecommerce.entity.Card;
-import com.prashanth.ecommerce.entity.Customer;
-import com.prashanth.ecommerce.entity.Item;
-import com.prashanth.ecommerce.entity.Product;
-import com.prashanth.ecommerce.exception.CustomerDoestNotExistException;
-import com.prashanth.ecommerce.exception.InvalidCardException;
-import com.prashanth.ecommerce.exception.ItemNotFoundException;
-import com.prashanth.ecommerce.exception.ProductDoesNotExistException;
-import com.prashanth.ecommerce.repository.CardRepository;
-import com.prashanth.ecommerce.repository.CustomerRepository;
-import com.prashanth.ecommerce.repository.ItemRepository;
-import com.prashanth.ecommerce.repository.ProductRepository;
+import com.prashanth.ecommerce.entity.*;
+import com.prashanth.ecommerce.exception.*;
+import com.prashanth.ecommerce.repository.*;
 import org.hibernate.annotations.Comment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,6 +15,10 @@ public class Validation {
     ProductRepository productRepository;
     @Autowired
     ItemRepository itemRepository;
+    @Autowired
+    OrderedRepository orderedRepository;
+    @Autowired
+    SellerRepository sellerRepository;
 
     public void customerValidation(int customerId) throws CustomerDoestNotExistException {
         try{
@@ -49,6 +44,31 @@ public class Validation {
         }
         catch (Exception e){
             throw new ItemNotFoundException("Invalid item ID");
+        }
+    }
+
+    public void orderValidation(int orderId) throws OrderDoesNotExist {
+        try{
+            Ordered ordered = orderedRepository.findById(orderId).get();
+        }
+        catch (Exception e){
+            throw new OrderDoesNotExist("Invalid order ID");
+        }
+    }
+
+    public void sellerValidation(String email) throws SellerDoesNotExistException {
+        try{
+            Seller seller = sellerRepository.findByEmailId(email);
+        } catch (Exception e){
+            throw new SellerDoesNotExistException("Invalid seller email ID");
+        }
+    }
+
+    public void sellerValidation(int sellerId) throws SellerDoesNotExistException {
+        try{
+            Seller seller = sellerRepository.findById(sellerId).get();
+        } catch (Exception e){
+            throw new SellerDoesNotExistException("Invalid seller email ID");
         }
     }
 }

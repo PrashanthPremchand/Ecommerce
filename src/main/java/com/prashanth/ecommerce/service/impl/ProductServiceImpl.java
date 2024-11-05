@@ -2,22 +2,42 @@ package com.prashanth.ecommerce.service.impl;
 
 import com.prashanth.ecommerce.dto.requestdto.AddProductRequestDto;
 import com.prashanth.ecommerce.dto.responsedto.AddProductResponseDto;
-import com.prashanth.ecommerce.entity.Item;
-import com.prashanth.ecommerce.entity.Product;
-import com.prashanth.ecommerce.entity.Seller;
+import com.prashanth.ecommerce.dto.responsedto.CartResponseDto;
+import com.prashanth.ecommerce.dto.responsedto.ItemResponseDto;
+import com.prashanth.ecommerce.dto.responsedto.ProductResponseDto;
+import com.prashanth.ecommerce.entity.*;
 import com.prashanth.ecommerce.enums.ProductStatus;
-import com.prashanth.ecommerce.exception.ProductOutOfStockException;
-import com.prashanth.ecommerce.exception.SellerDoesNotExistException;
-import com.prashanth.ecommerce.repository.SellerRepository;
+import com.prashanth.ecommerce.exception.*;
+import com.prashanth.ecommerce.repository.*;
+import com.prashanth.ecommerce.service.CartService;
 import com.prashanth.ecommerce.service.ProductService;
+import com.prashanth.ecommerce.transformer.CartTransformer;
+import com.prashanth.ecommerce.transformer.ItemTransformer;
 import com.prashanth.ecommerce.transformer.ProductTransformer;
+import com.prashanth.ecommerce.validation.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.CustomAutowireConfigurer;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ProductServiceImpl implements ProductService {
     @Autowired
     SellerRepository sellerRepository;
+    @Autowired
+    ProductRepository productRepository;
+//    @Autowired
+//    CustomerRepository customerRepository;
+//    @Autowired
+//    ItemRepository itemRepository;
+//    @Autowired
+//    CartRepository cartRepository;
+//    @Autowired
+//    CartService cartService;
+    @Autowired
+    Validation validation;
 
     @Override
     public AddProductResponseDto addProduct(AddProductRequestDto addProductRequestDto) throws SellerDoesNotExistException {
@@ -34,8 +54,9 @@ public class ProductServiceImpl implements ProductService {
         return ProductTransformer.productToAddProductResponseDto(product);
     }
 
-    public void decreaseProductQuantity(Item item) throws ProductOutOfStockException {
+    public void decreaseProductQuantity(Item item) throws ProductOutOfStockException, ProductDoesNotExistException {
         Product product = item.getProduct();
+        if(product == null) throw new ProductDoesNotExistException("For item " + item.getId() + " product doest not exist");
         int requiredQuantity = item.getRequiredQuantity();
         int availableQuantity = product.getQuantity();
         if(availableQuantity  < requiredQuantity){
@@ -43,5 +64,38 @@ public class ProductServiceImpl implements ProductService {
         }
         product.setQuantity(availableQuantity - requiredQuantity);
         if(product.getQuantity() == 0) product.setProductStatus(ProductStatus.OUT_OF_STOCK);
+    }
+
+    @Override
+    public List<ProductResponseDto> getAllProductBySellerEmail(String email) throws SellerDoesNotExistException {
+        validation.sellerValidation(email);
+        Seller seller = sellerRepository.findByEmailId(email);
+
+        List<ProductResponseDto> productResponseDtoList = new ArrayList<>();
+        for(Product currProduct : seller.getProducts()){
+            productResponseDtoList.add(ProductTransformer.productToProductResponseDto(currProduct));
+        }
+
+        return productResponseDtoList;
+    }
+
+    @Override
+    public String deleteProduct(int sellerId, int productId) throws ProductDoesNotExistException, SellerDoesNotExistException, IncorrectSellerException, CustomerDoestNotExistException, ItemNotFoundException {
+        validation.productValidation(productId);
+        Product product = productRepository.findById(productId).get();
+
+        validation.sellerValidation(sellerId);
+        Seller seller = sellerRepository.findById(sellerId).get();
+
+        if(product.getSeller() != seller) throw new IncorrectSellerException("Seller is not a match for this product");
+
+        seller.getProducts().remove(product);
+
+        for(Item currItem : product.getItemList()){
+            currItem.setProduct(null);
+        }
+        productRepository.delete(product);
+
+        return "Product has been successfully deleted";
     }
 }

@@ -53,7 +53,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public OrderResponseDto checkOutCart(CheckOutRequestDto checkOutRequestDto) throws CustomerDoestNotExistException, InvalidCardException, CartEmptyException, ProductOutOfStockException {
+    public OrderResponseDto checkOutCart(CheckOutRequestDto checkOutRequestDto) throws CustomerDoestNotExistException, InvalidCardException, CartEmptyException, ProductOutOfStockException, ProductDoesNotExistException {
         validation.customerValidation(checkOutRequestDto.getCustomerId());
         Customer customer = customerRepository.findById(checkOutRequestDto.getCustomerId()).get();
 
@@ -82,6 +82,8 @@ public class CartServiceImpl implements CartService {
         }
         catch (ProductOutOfStockException e){
             throw new ProductOutOfStockException(e.getMessage());
+        } catch (ProductDoesNotExistException e) {
+            throw new ProductDoesNotExistException(e.getMessage());
         }
 
     }

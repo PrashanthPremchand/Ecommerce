@@ -1,6 +1,7 @@
 package com.prashanth.ecommerce.service.impl;
 
 import com.prashanth.ecommerce.dto.requestdto.OrderRequestDto;
+import com.prashanth.ecommerce.dto.responsedto.CustomerResponseDto;
 import com.prashanth.ecommerce.dto.responsedto.ItemResponseDto;
 import com.prashanth.ecommerce.dto.responsedto.OrderResponseDto;
 import com.prashanth.ecommerce.entity.*;
@@ -41,7 +42,7 @@ public class OrderedServiceImpl implements OrderedService {
     OrderedRepository orderedRepository;
 
     @Override
-    public Ordered placedOrder(Customer customer, Card card) throws ProductOutOfStockException {
+    public Ordered placedOrder(Customer customer, Card card) throws ProductOutOfStockException, ProductDoesNotExistException {
         Cart cart = customer.getCart();
         Ordered ordered = new Ordered();
         ordered.setOrderNo(String.valueOf(UUID.randomUUID()));
@@ -56,6 +57,8 @@ public class OrderedServiceImpl implements OrderedService {
             }
             catch (ProductOutOfStockException e){
                 throw new ProductOutOfStockException(e.getMessage());
+            } catch (ProductDoesNotExistException e) {
+                throw new ProductDoesNotExistException(e.getMessage());
             }
         }
         for(Item currItem : cart.getItems()){
@@ -132,6 +135,32 @@ public class OrderedServiceImpl implements OrderedService {
         }
 
         return orderResponseDtoList;
+    }
+
+    @Override
+    public String deleteOrder(int orderId) throws OrderDoesNotExist {
+        validation.orderValidation(orderId);
+        Ordered ordered = orderedRepository.findById(orderId).get();
+
+        Customer customer = ordered.getCustomer();
+        customer.getOrderedList().remove(ordered);
+        for(Item currItem : ordered.getItems()){
+            currItem.setOrdered(null);
+        }
+        ordered.setItems(null);
+        ordered.setCustomer(null);
+        customerRepository.save(customer);
+
+        return "This order has been successfully removed";
+    }
+
+    @Override
+    public String getCustomerNameWithMaxTotalValue() throws OrderDoesNotExist {
+        int customerId = orderedRepository.findByMaxValue();
+        if(customerId == 0) throw new OrderDoesNotExist("The ordered list is empty");
+
+        Customer customer = customerRepository.findById(customerId).get();
+        return customer.getName();
     }
 
     public String generateMaskedCard(String cardNo){

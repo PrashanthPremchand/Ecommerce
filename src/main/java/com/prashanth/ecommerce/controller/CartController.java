@@ -32,7 +32,7 @@ public class CartController {
 
     //Checkout from cart
     @PostMapping("/checkout")
-    public OrderResponseDto checkOutCart(@RequestBody CheckOutRequestDto checkOutRequestDto) throws ProductOutOfStockException, CustomerDoestNotExistException, CartEmptyException, InvalidCardException {
+    public OrderResponseDto checkOutCart(@RequestBody CheckOutRequestDto checkOutRequestDto) throws ProductOutOfStockException, CustomerDoestNotExistException, CartEmptyException, InvalidCardException, ProductDoesNotExistException {
         return cartService.checkOutCart(checkOutRequestDto);
     }
 

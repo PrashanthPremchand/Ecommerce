@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface CartService {
     public CartResponseDto saveToCart(int customerId, Item item);
-    public OrderResponseDto checkOutCart(CheckOutRequestDto checkOutRequestDto) throws CustomerDoestNotExistException, InvalidCardException, CartEmptyException, ProductOutOfStockException;
+    public OrderResponseDto checkOutCart(CheckOutRequestDto checkOutRequestDto) throws CustomerDoestNotExistException, InvalidCardException, CartEmptyException, ProductOutOfStockException, ProductDoesNotExistException;
     public CartResponseDto removeItemFromCart(int customerId, int itemId) throws CustomerDoestNotExistException, ItemNotFoundException;
     public List<ItemResponseDto> getAllItemInCart(int customerId) throws CustomerDoestNotExistException, CartEmptyException;
 }
