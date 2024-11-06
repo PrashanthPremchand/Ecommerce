@@ -51,7 +51,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public List<CustomerResponseDto> getAllCustomers() throws CustomerRepositoryEmptyException {
         List<Customer> customerList = customerRepository.findAll();
-        if(customerList == null) throw new CustomerRepositoryEmptyException("Customer repository is empty");
+        if(customerList.isEmpty()) throw new CustomerRepositoryEmptyException("Customer repository is empty");
 
         return createListOfCustomerResponseDtoFromListOfCustomers(customerList);
     }
@@ -75,7 +75,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public List<CustomerResponseDto> getCustomerAboveAge(int age) throws CustomerDoestNotExistException {
         List<Customer> customerList = customerRepository.findAllByAge(age);
-        if(customerList == null) throw new CustomerDoestNotExistException("No customers above this age");
+        if(customerList.isEmpty()) throw new CustomerDoestNotExistException("No customers above this age");
 
         return createListOfCustomerResponseDtoFromListOfCustomers(customerList);
     }
@@ -83,7 +83,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public List<CustomerResponseDto> getAllCustomerWithCardType(CardType cardType) throws CustomerDoestNotExistException {
         List<Customer> customerList = customerRepository.findAllByCardType(cardType);
-        if(customerList == null) throw new CustomerDoestNotExistException("No customers with this card type");
+        if(customerList.isEmpty()) throw new CustomerDoestNotExistException("No customers with this card type");
 
         return createListOfCustomerResponseDtoFromListOfCustomers(customerList);
     }
@@ -100,11 +100,55 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public CustomerResponseDto updateCustomerAgeWithEmail(String email, int age) throws CustomerDoestNotExistException {
+        Customer customer = customerRepository.findByEmail(email);
+        if(customer == null) throw new CustomerDoestNotExistException("Customer with this email ID does not exists");
+
+        customer.setAge(age);
+        Customer savedCustomer = customerRepository.save(customer);
+
+        return CustomerTransformer.customerToCustomerResponseDto(savedCustomer);
+    }
+
+    @Override
+    public CustomerResponseDto updateCustomerAddressWithEmail(String email, String address) throws CustomerDoestNotExistException {
+        Customer customer = customerRepository.findByEmail(email);
+        if(customer == null) throw new CustomerDoestNotExistException("Customer with this email ID does not exists");
+
+        customer.setAddress(address);
+        Customer savedCustomer = customerRepository.save(customer);
+
+        return CustomerTransformer.customerToCustomerResponseDto(savedCustomer);
+    }
+
+    @Override
     public CustomerResponseDto updateCustomerNameWithMobNo(String mobNo, String name) throws CustomerDoestNotExistException {
         Customer customer = customerRepository.findByMobNo(mobNo);
         if(customer == null) throw new CustomerDoestNotExistException("Customer with this email ID does not exists");
 
         customer.setName(name);
+        Customer savedCustomer = customerRepository.save(customer);
+
+        return CustomerTransformer.customerToCustomerResponseDto(savedCustomer);
+    }
+
+    @Override
+    public CustomerResponseDto updateCustomerAgeWithMobNo(String mobNo, int age) throws CustomerDoestNotExistException {
+        Customer customer = customerRepository.findByMobNo(mobNo);
+        if(customer == null) throw new CustomerDoestNotExistException("Customer with this email ID does not exists");
+
+        customer.setAge(age);
+        Customer savedCustomer = customerRepository.save(customer);
+
+        return CustomerTransformer.customerToCustomerResponseDto(savedCustomer);
+    }
+
+    @Override
+    public CustomerResponseDto updateCustomerAddressWithMobNo(String mobNo, String address) throws CustomerDoestNotExistException {
+        Customer customer = customerRepository.findByMobNo(mobNo);
+        if(customer == null) throw new CustomerDoestNotExistException("Customer with this email ID does not exists");
+
+        customer.setAddress(address);
         Customer savedCustomer = customerRepository.save(customer);
 
         return CustomerTransformer.customerToCustomerResponseDto(savedCustomer);

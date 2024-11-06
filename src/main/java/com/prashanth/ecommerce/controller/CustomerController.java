@@ -62,10 +62,34 @@ public class CustomerController {
         return customerService.updateCustomerNameWithEmail(email, name);
     }
 
+    //Update customer name using customer email
+    @PutMapping("/update_age_with_email")
+    public CustomerResponseDto updateCustomerAgeWithEmail(@RequestParam("email")String email, @RequestParam("age") int age) throws CustomerDoestNotExistException {
+        return customerService.updateCustomerAgeWithEmail(email, age);
+    }
+
+    //Update customer name using customer email
+    @PutMapping("/update_address_with_email")
+    public CustomerResponseDto updateCustomerAddressWithEmail(@RequestParam("email")String email, @RequestParam("address")String address) throws CustomerDoestNotExistException {
+        return customerService.updateCustomerAddressWithEmail(email, address);
+    }
+
     //Update customer name using customer mobile number
     @PutMapping("/update_name_with_mobNo")
     public CustomerResponseDto updateCustomerNameWithMobNo(@RequestParam("mobNo")String mobNo, @RequestParam("name")String name) throws CustomerDoestNotExistException {
         return customerService.updateCustomerNameWithMobNo(mobNo, name);
+    }
+
+    //Update customer name using customer mobile number
+    @PutMapping("/update_age_with_mobNo")
+    public CustomerResponseDto updateCustomerAgeWithMobNo(@RequestParam("mobNo")String mobNo, @RequestParam("age") int age) throws CustomerDoestNotExistException {
+        return customerService.updateCustomerAgeWithMobNo(mobNo, age);
+    }
+
+    //Update customer name using customer mobile number
+    @PutMapping("/update_address_with_mobNo")
+    public CustomerResponseDto updateCustomerAddressWithMobNo(@RequestParam("mobNo")String mobNo, @RequestParam("address")String address) throws CustomerDoestNotExistException {
+        return customerService.updateCustomerAddressWithMobNo(mobNo, address);
     }
 
     // delete a customer by email

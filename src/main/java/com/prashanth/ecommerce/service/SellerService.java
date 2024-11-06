@@ -17,4 +17,6 @@ public interface SellerService {
     public SellerResponseDto updateSellerNameById(int id, String name) throws SellerDoesNotExistException;
     public SellerResponseDto updateSellerAgeById(int id, int age) throws SellerDoesNotExistException;
     public String deleteSellerByEmail(String email) throws SellerDoesNotExistException, ProductDoesNotExistException, CustomerDoestNotExistException, IncorrectSellerException, ItemNotFoundException;
+    public String deleteSellerById(int id) throws SellerDoesNotExistException, ProductDoesNotExistException, CustomerDoestNotExistException, IncorrectSellerException, ItemNotFoundException;
+    public List<SellerResponseDto> getAllSellersOfAge(int age) throws SellerDoesNotExistException;
 }

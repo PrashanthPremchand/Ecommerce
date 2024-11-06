@@ -116,6 +116,27 @@ public class SellerServiceImpl implements SellerService {
         return "Seller deleted successfully";
     }
 
+    @Override
+    public String deleteSellerById(int id) throws SellerDoesNotExistException, ProductDoesNotExistException, CustomerDoestNotExistException, IncorrectSellerException, ItemNotFoundException {
+        validation.sellerValidation(id);
+        Seller seller = sellerRepository.findById(id).get();
+
+        if(!seller.getProducts().isEmpty()){
+            for(Product currProduct : seller.getProducts()){
+                productService.deleteProduct(seller.getId(), currProduct.getId());
+            }
+        }
+        sellerRepository.delete(seller);
+        return "Seller deleted successfully";
+    }
+
+    @Override
+    public List<SellerResponseDto> getAllSellersOfAge(int age) throws SellerDoesNotExistException {
+        List<Seller> sellerList = sellerRepository.findAllByAge(age);
+        if(sellerList.isEmpty()) throw new SellerDoesNotExistException("No seller of this age");
+        return createSellerResponseDtoListFromSellerList(sellerList);
+    }
+
     public List<SellerResponseDto> createSellerResponseDtoListFromSellerList(List<Seller> sellerList){
         List<SellerResponseDto> sellerResponseDtoList = new ArrayList<>();
         for(Seller currSeller : sellerList){

@@ -121,7 +121,7 @@ public class OrderedServiceImpl implements OrderedService {
     @Override
     public List<OrderResponseDto> getFiveOrders(int customerId) throws CustomerDoestNotExistException, OrderDoesNotExist {
         List<Ordered> orderedList = orderedRepository.findByCustomer_CustomerId(customerId);
-        if(orderedList == null) throw new OrderDoesNotExist("NO order for this customer ID");
+        if(orderedList.isEmpty()) throw new OrderDoesNotExist("NO order for this customer ID");
         return createListOfOrderResponseDtoFromListOfOrders(orderedList);
     }
 

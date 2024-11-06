@@ -19,7 +19,11 @@ public interface CustomerService {
     public List<CustomerResponseDto> getCustomerAboveAge(int age) throws CustomerDoestNotExistException;
     public List<CustomerResponseDto> getAllCustomerWithCardType(CardType cardType) throws CustomerDoestNotExistException;
     public CustomerResponseDto updateCustomerNameWithEmail(String email, String name) throws CustomerDoestNotExistException;
+    public CustomerResponseDto updateCustomerAgeWithEmail(String email, int age) throws CustomerDoestNotExistException;
+    public CustomerResponseDto updateCustomerAddressWithEmail(String email, String address) throws CustomerDoestNotExistException;
     public CustomerResponseDto updateCustomerNameWithMobNo(String mobNo, String name) throws CustomerDoestNotExistException;
+    public CustomerResponseDto updateCustomerAgeWithMobNo(String mobNo, int age) throws CustomerDoestNotExistException;
+    public CustomerResponseDto updateCustomerAddressWithMobNo(String mobNo, String address) throws CustomerDoestNotExistException;
     public String deleteCustomerByEmail(String email) throws CustomerDoestNotExistException;
     public String deleteCustomerByMobNo(String mobNo) throws CustomerDoestNotExistException;
 }

@@ -58,7 +58,7 @@ public class CardServiceImpl implements CardService {
     @Override
     public List<CardResponseDto> findCardByType(CardType cardType) throws CardNotFoundException {
         List<Card> cardList = cardRepository.findAllByCardType(cardType);
-        if(cardList == null) throw new CardNotFoundException("There are no cards with this card type in the database");
+        if(cardList.isEmpty()) throw new CardNotFoundException("There are no cards with this card type in the database");
         List<CardResponseDto> cardResponseDtoList = new ArrayList<>();
         for(Card currCard : cardList){
             cardResponseDtoList.add(CardTransformer.cardToCardResponseDto(currCard));
@@ -69,7 +69,7 @@ public class CardServiceImpl implements CardService {
     @Override
     public List<CardResponseDto> findCardByTypeAndExpiry(CardType cardType, LocalDate expiryDate) throws CardNotFoundException {
         List<Card> cardList = cardRepository.findAllByCardTypeAndExpiryDate(cardType, expiryDate);
-        if(cardList == null) throw new CardNotFoundException("There are no card matching you criteria");
+        if(cardList.isEmpty()) throw new CardNotFoundException("There are no card matching you criteria");
         List<CardResponseDto> cardResponseDtoList = new ArrayList<>();
         for(Card currCard : cardList){
             cardResponseDtoList.add(CardTransformer.cardToCardResponseDto(currCard));

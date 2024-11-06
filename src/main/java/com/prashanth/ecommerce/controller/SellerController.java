@@ -75,4 +75,16 @@ public class SellerController {
     public String deleteSellerByEmail(@RequestParam("email") String email) throws ProductDoesNotExistException, CustomerDoestNotExistException, IncorrectSellerException, SellerDoesNotExistException, ItemNotFoundException {
         return sellerService.deleteSellerByEmail(email);
     }
+
+    //Delete a seller by email
+    @DeleteMapping("/delete_id")
+    public String deleteSellerById(@RequestParam("id") int id) throws ProductDoesNotExistException, CustomerDoestNotExistException, IncorrectSellerException, SellerDoesNotExistException, ItemNotFoundException {
+        return sellerService.deleteSellerById(id);
+    }
+
+    // get all sellers of a particular age
+    @GetMapping("/get_all_seller_of_age")
+    public List<SellerResponseDto> getAllSellersOfAge(@RequestParam("age") int age) throws SellerDoesNotExistException {
+        return sellerService.getAllSellersOfAge(age);
+    }
 }

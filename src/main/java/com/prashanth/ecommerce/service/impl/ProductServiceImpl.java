@@ -91,14 +91,14 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductResponseDto> getFiveCheapestProducts() throws ProductRepositoryEmptyException {
         List<Product> productList = productRepository.findFiveCheapest();
-        if(productList == null) throw new ProductRepositoryEmptyException("Product repository is empty");
+        if(productList.isEmpty()) throw new ProductRepositoryEmptyException("Product repository is empty");
         return createListOfProductResponseDtoFromListOfProducts(productList);
     }
 
     @Override
     public List<ProductResponseDto> getFiveCostliestProducts() throws ProductRepositoryEmptyException {
         List<Product> productList = productRepository.findFiveCostliest();
-        if(productList == null) throw new ProductRepositoryEmptyException("Product repository is empty");
+        if(productList.isEmpty()) throw new ProductRepositoryEmptyException("Product repository is empty");
         return createListOfProductResponseDtoFromListOfProducts(productList);
     }
 
